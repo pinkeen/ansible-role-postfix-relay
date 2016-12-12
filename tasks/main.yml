@@ -13,13 +13,13 @@
     backup: yes
     mode: 0600
     line: "[{{ postfix_relay_host }}]:{{ postfix_relay_port}} {{ postfix_relay_username }}:{{ postfix_relay_password }}"
-  notify: Reload postfix    
+  notify: Reload postfix
+  register: sasl_map_check
 
 - name: Encode postfix relay password file
   shell: postmap /etc/postfix/sasl_passwd
-  args: 
-    creates: /etc/postfix/sasl_passwd.db
-  notify: Reload postfix    
+  when: sasl_map_check.changed
+  notify: Reload postfix
 
 - name: Configure postfix
   lineinfile:
